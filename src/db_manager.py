@@ -60,10 +60,23 @@ class DBManager:
         Получает список всех вакансий,
         в названии которых содержатся переданные в метод слова
         """
-        self.cursor.execute("""
-            SELECT * FROM vacancies 
-            WHERE vacancy_name ILIKE '%%' || %s || '%%';
-        """, (keyword, ))  # '%%' означает любую последовательность символов перед и после ключевого слова (%s)
+        words_list = keyword.split()
+
+        query = """
+                SELECT 
+                c.company_name, 
+                v.vacancy_name, 
+                v.salary_min, 
+                v.salary_max, 
+                v.vacancy_url
+                FROM vacancies v
+                JOIN companies c ON v.company_id = c.company_id
+                WHERE """ + " AND ".join(["v.vacancy_name "
+                                          "ILIKE %s"] * len(words_list))
+
+        params = ['%' + word + '%' for word in words_list]
+
+        self.cursor.execute(query, params)
         return self.cursor.fetchall()
 
     def __del__(self):
