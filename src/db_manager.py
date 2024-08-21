@@ -49,9 +49,11 @@ class DBManager:
         Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям
         """
         self.cursor.execute("""
-            SELECT * FROM vacancies
-            WHERE (salary_min + salary_max) > 
-            (SELECT AVG(salary_min + salary_max) FROM vacancies);
+            SELECT c.company_name, v.vacancy_name, v.salary_min, v.salary_max, v.vacancy_url 
+        FROM vacancies v
+        JOIN companies c ON v.company_id = c.company_id
+        WHERE (v.salary_min + v.salary_max) > 
+        (SELECT AVG(salary_min + salary_max) FROM vacancies);
         """)
         return self.cursor.fetchall()
 
