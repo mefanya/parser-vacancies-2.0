@@ -3,6 +3,7 @@ from typing import Any
 
 import requests
 import psycopg2
+import os
 
 
 def get_companies():
@@ -10,7 +11,10 @@ def get_companies():
     Получает имя компаний, ID и url из файла companies_id.json,
     :return: список словарей с информацией о компаниях
     """
-    with open('..\\data\\companies_id.json', 'r', encoding='utf-8') as f:
+    relative_path = '../data/companies_id.json'
+    absolute_path = os.path.abspath(relative_path)
+
+    with open(absolute_path, 'r', encoding='utf-8') as f:
         companies_data = json.load(f)[0]
 
     data = []
